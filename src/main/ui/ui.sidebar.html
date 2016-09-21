@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script type="text/javascript">
+        function generate() {
+            google.script.run.withSuccessHandler(function () {
+                document.getElementById('result').innerHTML = 'Done';
+            }).withFailureHandler(function (e) {
+                document.getElementById('result').innerHTML = 'Failed ' + e;
+            }).profileFiles();
+        }
+
+        function clearAllProperties() {
+            google.script.run.withSuccessHandler(function () {
+                console.log('Cleared');
+            }).clearProperties();
+        }
+
+        function startLogger() {
+            google.script.run.withSuccessHandler(function () {
+                console.log('Logger started');
+            }).startLogger();
+        }
+    </script>
+</head>
+<body>
+Environment <?= Configuration.getCurrent().debug ? "Dev" : "Prod" ?> <br/>
+<button id="clear" onclick="clearAllProperties()">Clear Properties</button>
+<button id="start_logger" onclick="startLogger()">Start Logger</button>
+<br/>
+
+<button id="generate" onclick="generate()">Generate</button>
+<div id="result"/>
+
+</body>
+</html>

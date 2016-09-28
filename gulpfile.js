@@ -1,6 +1,9 @@
 'use strict';
 
 var gulp = require('gulp');
+var browserify = require('browserify');
+var source = require('vinyl-source-stream');
+var buffer = require('vinyl-buffer');
 var jshint = require('gulp-jshint');
 var shell = require('gulp-shell');
 var minimist = require('minimist');
@@ -25,42 +28,14 @@ var buildDir = 'build/' + options.env + '/src';
 gulp.task('deploy', ['build'], shell.task(['gapps upload'],
     {cwd: 'build/' + options.env}));
 
-gulp.task('build', ['clean'], function () {
-    copyEnvironmentCode();
-    copyConfiguration();
-    copyServerCode();
+gulp.task('build', ['browserify'], function () {
+    copyConfig();
     copyClientCode();
 });
 
-function copyEnvironmentCode() {
-    switch (options.env) {
-        case 'dev':
-            gulp.src('gapps.config.json')
-                .pipe(gulp.dest('build/' + options.env))
-            gulp.src(srcDir + '/**/*.js')
-                .pipe(jshint())
-                .pipe(jshint.reporter('jshint-stylish'));
-            break;
-        case 'test':
-            gulp.src(srcDir + '/tests/*.js')
-                .pipe(gulp.dest(buildDir));
-            break;
-    }
-
-    return gulp.src(srcDir + '/environments/' + options.env + '/*.js')
-        .pipe(gulp.dest(buildDir));
-}
-
-function copyConfiguration() {
-    return gulp.src(srcDir + '/configuration.js')
-        .pipe(gulp.dest(buildDir));
-}
-
-function copyServerCode() {
-    return gulp.src([
-        srcDir + '/server/*.js',
-        srcDir + '/ui/*.server.js'])
-        .pipe(gulp.dest(buildDir));
+function copyConfig() {
+    return gulp.src('gapps.config.json')
+        .pipe(gulp.dest('build/' + options.env));
 }
 
 function copyClientCode() {
@@ -77,6 +52,13 @@ function copyClientCode() {
         }))
         .pipe(gulp.dest(buildDir));
 }
+gulp.task('browserify', function () {
+    return browserify(srcDir + '/server/main.js')
+        .plugin('gasify')
+        .bundle()
+        .pipe(source('main.js'))
+        .pipe(gulp.dest(buildDir));
+});
 
 gulp.task('test', function () {
     return gulp.src(testDir, {read: false})
@@ -87,8 +69,8 @@ gulp.task('clean', function () {
     return del([buildDir + '/**']);
 });
 
-gulp.task('cleanAll', function() {
-   return del(['build/**']);
+gulp.task('cleanAll', function () {
+    return del(['build/**']);
 });
 
 gulp.task('lint', function () {

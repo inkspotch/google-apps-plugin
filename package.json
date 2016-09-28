@@ -1,7 +1,9 @@
 {
   "author": "inkspotch@gmail.com",
   "dependencies": {
+    "browserify": "^13.1.0",
     "del": "^2.2.0",
+    "gasify": "^0.1.0",
     "gulp": "^3.9.0",
     "gulp-debug": "^2.1.2",
     "gulp-jshint": "^1.12.0",
@@ -10,7 +12,9 @@
     "jshint-stylish": "^2.0.1",
     "minimist": "^1.2.0",
     "node-google-apps-script": "^1.1.3",
-    "vinyl-paths": "^2.1.0"
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-paths": "^2.1.0",
+    "vinyl-source-stream": "^1.1.0"
   },
   "description": "Templating across docs, sheets, and slides",
   "keywords": [],

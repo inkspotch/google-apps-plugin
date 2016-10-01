@@ -22,8 +22,10 @@ var knownOptions = {
 var options = minimist(process.argv.slice(2), knownOptions);
 
 var srcDir = 'src/main';
+var environmentDir = 'src/environment/' + options.env;
 var testDir = 'src/test/**/*.js';
 var buildDir = 'build/' + options.env + '/src';
+var intermediateDir = 'build/intermediate/' + options.env;
 
 gulp.task('deploy', ['build'], shell.task(['gapps upload'],
     {cwd: 'build/' + options.env}));
@@ -52,12 +54,18 @@ function copyClientCode() {
         }))
         .pipe(gulp.dest(buildDir));
 }
-gulp.task('browserify', function () {
-    return browserify(srcDir + '/server/main.js')
+gulp.task('browserify', ['copyServerCode'], function () {
+    return browserify(intermediateDir + '/main.js')
         .plugin('gasify')
         .bundle()
         .pipe(source('main.js'))
         .pipe(gulp.dest(buildDir));
+});
+
+gulp.task('copyServerCode', function () {
+    return gulp.src([environmentDir + '/*.js',
+        srcDir + '/server/*.js'])
+        .pipe(gulp.dest(intermediateDir));
 });
 
 gulp.task('test', function () {

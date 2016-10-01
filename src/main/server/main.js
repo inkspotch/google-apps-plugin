@@ -1,5 +1,7 @@
 var logger = require('./logger.js');
 
+global.Configuration = require('./configuration');
+
 var keys = {
     files: "files"
 };

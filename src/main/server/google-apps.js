@@ -7,6 +7,10 @@ module.exports = {
         return DocumentApp;
     },
 
+    spreadsheetApp: function () {
+        return SpreadsheetApp;
+    },
+
     driveApp: function () {
         return DriveApp;
     }

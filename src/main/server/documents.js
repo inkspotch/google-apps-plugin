@@ -19,7 +19,14 @@ function getDocuments(property) {
                 var tags = document.getBody().getText().match(tagRegex);
                 logger.log("Tags: " + tags.join(", "));
 
-                googleApps.driveApp().getFileById(fileId).makeCopy(fileName + '-Output');
+                var newId = googleApps.driveApp().getFileById(fileId).makeCopy(this.fileName + '-Output').getId();
+                document = googleApps.documentApp().openById(newId);
+
+                for(var i in tags) {
+                    var cellName = tags[i].substring(1, tags[i].length - 1);
+                    var data = sheet.getRange(cellName).getValue();
+                    document.getBody().replaceText(tags[i], data);
+                }
             }
         });
     }

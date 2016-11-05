@@ -50,7 +50,7 @@ global.showTags = function() {
     logger.log('documents: ' + JSON.stringify(docs[0]));
 
     for (var i = 0; i < docs.length; i++) {
-        docs[i].generateOutput();
+        docs[i].generateOutput(google.spreadsheetApp().getActiveSheet());
     }
 };
 

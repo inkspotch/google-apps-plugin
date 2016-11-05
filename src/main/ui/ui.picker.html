@@ -49,18 +49,24 @@
         function pickerCallback(data) {
             var action = data[google.picker.Response.ACTION];
             if (action == google.picker.Action.PICKED) {
-                var doc = data[google.picker.Response.DOCUMENTS][0];
 
+                var doc = data[google.picker.Response.DOCUMENTS][0];
                 var id = doc[google.picker.Document.ID];
+
                 var name = doc[google.picker.Document.NAME];
 
                 google.script.run
-                        .addDocument(name, id);
-
-                google.script.host.close();
+                        .withSuccessHandler(configSucess)
+                        .withFailureHandler(configSucess)
+                        .addDocument(id);
             } else if (action == google.picker.Action.CANCEL) {
                 google.script.host.close();
             }
+        }
+
+        function configSucess(config) {
+            console.log('hello ' + config);
+            google.script.host.close();
         }
 
         function showError(message) {

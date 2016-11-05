@@ -1,3 +1,3 @@
-exports.Configuration = {
+module.exports = {
     isDebug: function () { return true; }
 };

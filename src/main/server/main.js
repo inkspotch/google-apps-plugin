@@ -1,10 +1,9 @@
 var logger = require('./logger.js');
+var configuration = require('./configuration.js');
+var google = require('./google-apps.js');
+var documents = require('./documents');
 
-global.Configuration = require('./configuration');
-
-var keys = {
-    files: "files"
-};
+global.Configuration = configuration;
 
 global.onInstall = function (e) {
     onOpen(e);
@@ -39,34 +38,25 @@ global.getOAuthToken = function () {
     return ScriptApp.getOAuthToken();
 };
 
-global.addDocument = function (name, id) {
-    var fileNames = getLinkedDocuments();
-    fileNames[name] = id;
+global.addDocument = function (id) {
+    logger.log('add document ' + id);
 
-    Logger.log('add document ' + name + ' ' + id);
-
-    PropertiesService.getDocumentProperties()
-        .setProperty(keys.files, JSON.stringify(fileNames));
+    documents.add(id);
 };
 
-global.log = function(message) {
-    logger.log(message);
-};
+global.showTags = function() {
+    var docs = documents.getAll();
+    logger.log('documents: ' + JSON.stringify(docs));
+    logger.log('documents: ' + JSON.stringify(docs[0]));
 
-global.clearDocuments = function () {
-    PropertiesService.getDocumentProperties()
-        .deleteProperty(keys.files);
-};
-
-global.getLinkedDocuments = function () {
-    var docProperties = PropertiesService.getDocumentProperties();
-    var property = docProperties.getProperty(keys.files);
-
-    try {
-        return property ? JSON.parse(property) : {};
-    } catch (e) {
-        Logger.log('getLinkedDocuments failed: ' + e);
-        return {};
+    for (var i = 0; i < docs.length; i++) {
+        docs[i].generateOutput();
     }
 };
 
+if(configuration.isDebug()) {
+    global.reset = function () {
+        google.propertiesService().getDocumentProperties()
+            .deleteAllProperties();
+    };
+}

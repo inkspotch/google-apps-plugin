@@ -5,19 +5,30 @@
         function clearAllProperties() {
             google.script.run.withSuccessHandler(function () {
                 console.log('Cleared');
-            }).clearProperties();
+            }).reset();
         }
 
-        function log() {
+        function showDocuments() {
             google.script.run.withSuccessHandler(function () {
-                console.log('logged');
-            }).log('hello');
+                console.log('Success');
+            }).showTags();
+        }
+
+        function getConfig() {
+            google.script.run.withSuccessHandler(function (isDebug) {
+                console.log('isDebug ' + isDebug);
+                result.innerHTML = "" + isDebug;
+            }).config();
         }
     </script>
 </head>
 <body>
+<p>
+    Environment <?= Configuration.isDebug() ?>
+</p>
 <button id="clear" onclick="clearAllProperties()">Clear Properties</button>
-<button id="start_logger" onclick="log()">Start Logger</button>
+<button id="start_logger" onclick="showDocuments()">Log Documents</button>
+<button onclick="getConfig()">Config</button>
 <br/>
 
 <button id="generate">Generate</button>

@@ -68,7 +68,7 @@ gulp.task('copyServerCode', function () {
         .pipe(gulp.dest(intermediateDir));
 });
 
-gulp.task('test', function () {
+gulp.task('test', ['build'], function () {
     return gulp.src(testDir, {read: false})
         .pipe(mocha());
 });

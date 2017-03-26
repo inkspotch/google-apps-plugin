@@ -1,26 +1,19 @@
 var assert = require('assert');
 var sinon = require('sinon');
+var sinonTest = require('sinon-test');
 var logger = require('../main/server/logger');
 var googleApps = require('../main/server/google-apps');
 var documents = require('../main/server/documents');
 
-var sandbox;
-
-beforeEach(function () {
-    sandbox = sinon.sandbox.create();
-});
-
-afterEach(function () {
-    sandbox.restore();
-});
+sinon.test = sinonTest.configureTest(sinon);
 
 describe('store document in properties service', function () {
-    it('should save the document in an array', function () {
+    it('should save the document in an array', sinon.test(function () {
         var storedDocuments = {};
 
-        logger.log = sandbox.stub();
+        logger.log = {};
 
-        sandbox.stub(googleApps, 'propertiesService', function () {
+        this.stub(googleApps, 'propertiesService').callsFake(function () {
             return {
                 getDocumentProperties: function () {
                     return {
@@ -35,7 +28,7 @@ describe('store document in properties service', function () {
             };
         });
 
-        sandbox.stub(googleApps, 'documentApp', function () {
+        this.stub(googleApps, 'documentApp').callsFake(function () {
             return {
                 openById: function (fileId) {
                     return {
@@ -53,9 +46,9 @@ describe('store document in properties service', function () {
         documents.add(fileId + 1);
 
         assert.equal(Object.keys(storedDocuments).length, 2);
-    });
+    }));
 
-    it('should get all documents from the properties service', function () {
+    it('should get all documents from the properties service', sinon.test(function () {
         var storedDocuments = {
             'file_id_1': 'file_name_1'
         };
@@ -69,7 +62,7 @@ describe('store document in properties service', function () {
             }
         };
 
-        sandbox.stub(googleApps, 'propertiesService', function () {
+        this.stub(googleApps, 'propertiesService').callsFake(function () {
             return {
                 getDocumentProperties: function () {
                     return {
@@ -84,7 +77,7 @@ describe('store document in properties service', function () {
             };
         });
 
-        sandbox.stub(googleApps, 'driveApp', function () {
+        this.stub(googleApps, 'driveApp').callsFake(function () {
             return {
                 getFileById: function () {
                     return file;
@@ -97,5 +90,5 @@ describe('store document in properties service', function () {
         assert.equal(document.fileId, 'file_id_1');
         assert.equal(document.fileName, 'file_name_1');
         assert.ok(document.generateOutput);
-    });
+    }));
 });
